@@ -40,6 +40,7 @@ public class GPFlags extends JavaPlugin {
 
         this.playerListener = new PlayerListener();
         Bukkit.getPluginManager().registerEvents(playerListener, this);
+        System.out.println("REGISTERED!");
         try {
             Class.forName("org.purpurmc.purpur.event.entity.RidableMoveEvent");
             Bukkit.getPluginManager().registerEvents(new RidableMoveListener(), this);

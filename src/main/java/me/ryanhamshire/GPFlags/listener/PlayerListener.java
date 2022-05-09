@@ -30,6 +30,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class PlayerListener implements Listener {
 
@@ -61,7 +62,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     private void onMove(PlayerMoveEvent event) {
-        if (event.getTo() == null) return;
         Location locTo = event.getTo();
         Location locFrom = event.getFrom();
         Player player = event.getPlayer();
@@ -70,7 +70,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onTeleport(PlayerTeleportEvent event) {
-        if (event.getTo() == null) return;
         Location locTo = event.getTo();
         Location locFrom = event.getFrom();
         Player player = event.getPlayer();
@@ -128,8 +127,13 @@ public class PlayerListener implements Listener {
         if (claimTo == claimFrom) return true;
         PlayerClaimBorderEvent playerClaimBorderEvent = new PlayerClaimBorderEvent(player, claimFrom, claimTo, locFrom, locTo);
         Bukkit.getPluginManager().callEvent(playerClaimBorderEvent);
-        if (event != null) {
-            event.setCancelled(playerClaimBorderEvent.isCancelled());
+        if (playerClaimBorderEvent.isCancelled()) {
+            if (event != null) {
+                event.setCancelled(true);
+            }
+            if (player.getVehicle() != null) {
+                player.getVehicle().eject();
+            }
         }
         return !playerClaimBorderEvent.isCancelled();
     }
